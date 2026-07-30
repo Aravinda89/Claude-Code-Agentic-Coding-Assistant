@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to Claude Code</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a12; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+    canvas { display: block; }
+    #overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+    #overlay h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      animation: fadeIn 1.5s ease forwards;
+    }
+    #overlay p {
+      font-size: clamp(0.85rem, 2vw, 1.1rem);
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      animation: fadeIn 2.2s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #hint {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,0.2);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      pointer-events: none;
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; }
+      50%       { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="overlay">
+    <h1>Claude Code</h1>
+    <p>Move your mouse &mdash; click to pulse</p>
+  </div>
+  <div id="hint">Every dot is a possibility</div>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+
+    let W, H, particles, mouse = { x: -9999, y: -9999 };
+    const N = 120;
+    const MAX_DIST = 140;
+    const REPEL_RADIUS = 90;
+    const REPEL_STRENGTH = 0.35;
+
+    const PALETTE = [
+      [167, 139, 250],  // violet
+      [ 96, 165, 250],  // blue
+      [ 52, 211, 153],  // green
+      [251, 191,  36],  // amber
+      [248, 113, 113],  // red
+    ];
+
+    function randColor() {
+      return PALETTE[Math.floor(Math.random() * PALETTE.length)];
+    }
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function initParticles() {
+      particles = Array.from({ length: N }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        r: Math.random() * 2 + 1.2,
+        color: randColor(),
+        alpha: Math.random() * 0.5 + 0.5,
+        pulse: 0,
+      }));
+    }
+
+    function dist(a, b) {
+      const dx = a.x - b.x, dy = a.y - b.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    let ripples = [];
+
+    function addRipple(x, y) {
+      ripples.push({ x, y, r: 0, maxR: 200, alpha: 0.8 });
+    }
+
+    function draw(ts) {
+      ctx.clearRect(0, 0, W, H);
+
+      // background gradient
+      const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.75);
+      bg.addColorStop(0, '#0f0f1e');
+      bg.addColorStop(1, '#050509');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // ripples
+      ripples = ripples.filter(rp => rp.alpha > 0.01);
+      for (const rp of ripples) {
+        rp.r += 4;
+        rp.alpha *= 0.94;
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(167,139,250,${rp.alpha * 0.4})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      // edges
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const d = dist(particles[i], particles[j]);
+          if (d < MAX_DIST) {
+            const t = 1 - d / MAX_DIST;
+            const [r1, g1, b1] = particles[i].color;
+            const [r2, g2, b2] = particles[j].color;
+            const r = Math.round((r1 + r2) / 2);
+            const g = Math.round((g1 + g2) / 2);
+            const b = Math.round((b1 + b2) / 2);
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${t * 0.4})`;
+            ctx.lineWidth = t * 1.2;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // nodes
+      for (const p of particles) {
+        // mouse repulsion
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < REPEL_RADIUS && d > 0) {
+          const force = (1 - d / REPEL_RADIUS) * REPEL_STRENGTH;
+          p.vx += (dx / d) * force;
+          p.vy += (dy / d) * force;
+        }
+
+        // speed cap
+        const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (spd > 2.5) { p.vx *= 0.95; p.vy *= 0.95; }
+
+        // drift toward center gently
+        p.vx += (W / 2 - p.x) * 0.00005;
+        p.vy += (H / 2 - p.y) * 0.00005;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // bounce
+        if (p.x < 0) { p.x = 0; p.vx *= -1; }
+        if (p.x > W) { p.x = W; p.vx *= -1; }
+        if (p.y < 0) { p.y = 0; p.vy *= -1; }
+        if (p.y > H) { p.y = H; p.vy *= -1; }
+
+        // pulse decay
+        p.pulse *= 0.92;
+
+        const [r, g, b] = p.color;
+        const glow = p.r + p.pulse * 8;
+
+        // glow
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glow * 4);
+        grad.addColorStop(0, `rgba(${r},${g},${b},${0.25 + p.pulse * 0.4})`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, glow * 4, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // core dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, glow, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${r},${g},${b},${p.alpha})`;
+        ctx.fill();
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // click pulse: energize nearby particles
+    canvas.addEventListener('click', e => {
+      addRipple(e.clientX, e.clientY);
+      for (const p of particles) {
+        const dx = p.x - e.clientX, dy = p.y - e.clientY;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 180) {
+          const f = (1 - d / 180) * 3;
+          p.vx += (dx / d) * f;
+          p.vy += (dy / d) * f;
+          p.pulse = Math.min(1, (1 - d / 180) + p.pulse);
+        }
+      }
+    });
+
+    canvas.addEventListener('mousemove', e => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      mouse.x = -9999;
+      mouse.y = -9999;
+    });
+
+    window.addEventListener('resize', () => {
+      resize();
+      initParticles();
+    });
+
+    resize();
+    initParticles();
+    requestAnimationFrame(draw);
+  </script>
+</body>
+</html>
