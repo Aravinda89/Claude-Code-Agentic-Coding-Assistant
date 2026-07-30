@@ -12,3 +12,6 @@ draw a diagram illustrate this flow
 
 # prompt5
  how do I run this appilication
+
+/init
+/ide
