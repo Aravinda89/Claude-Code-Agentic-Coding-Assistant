@@ -1,3 +1,5 @@
 # prompt1
-
 make a cool visualization for me, I'm just getting started
+
+# prompt2
+open it in the browser
