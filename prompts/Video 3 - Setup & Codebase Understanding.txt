@@ -15,3 +15,7 @@ draw a diagram illustrate this flow
 
 /init
 /ide
+
+# always use uv to run the server do not use pip directly
+
+# make sure to use uv to manage all dependencies
