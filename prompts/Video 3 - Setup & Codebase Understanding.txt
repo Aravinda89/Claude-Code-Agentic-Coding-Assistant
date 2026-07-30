@@ -3,3 +3,6 @@ give me an overview of this codebase
 
 # prompt2
  how are these documents processed
+
+# prompt3
+trace the process of handling a user's query from  frontend to backend
