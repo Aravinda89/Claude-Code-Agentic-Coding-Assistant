@@ -1,2 +1,2 @@
 # Claude-Code-Agentic-Coding-Assistant
-Claude Code: A Highly Agentic Coding Assistant - deeplearing.ai
+Claude Code: A Highly Agentic Coding Assistant - deeplearning.ai
