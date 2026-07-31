@@ -7,3 +7,6 @@ The chat interface displays query responses with source citations. I need to mod
 - The links should be embedded invisibly (no visible URL text)
 
 
+[Ctrl + V to paste the screenshot] these links are hard to read. Make them more visually appealing.
+
+
