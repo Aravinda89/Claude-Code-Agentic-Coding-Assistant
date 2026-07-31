@@ -24,5 +24,18 @@ claude mcp add playwright npx @playwright/mcp@latest
 /mcp
 
 
+Using the playwright MCP server, visit 127.0.0.1:8000 and view the '+ New Chat' button. I want that button to look the same as the other links below for Courses and Try Asking. Make sure this is left aligned and that the border is removed.
+
+
+In @backend/search_tools.py, add a second tool alongside the existing content-related tool. This new tool should handle course outline queries.
+- Functionality:
+   - Input: Course title
+   - Output: Course title, course link, and complete lesson list
+   - For each lesson: lesson number, lesson title
+- Data source: Course metadata collection of the vector store
+- Update the system prompt in @backend/ai_generator so that the course title, course link, the number and title of each lesson are all returned to address an outline-related queries.
+- Make sure that the new tool is registered in the system. 
+
+
 
 
