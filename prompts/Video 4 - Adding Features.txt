@@ -17,3 +17,12 @@ Add a '+ NEW CHAT' button to the left sidebar above the courses section. When cl
 - Match the styling of existing sections (Courses, Try asking) - same font size, color, and uppercase formatting
 
 
+# do not run the server using ./run.sh I will restart it by myself
+
+
+claude mcp add playwright npx @playwright/mcp@latest
+/mcp
+
+
+
+
