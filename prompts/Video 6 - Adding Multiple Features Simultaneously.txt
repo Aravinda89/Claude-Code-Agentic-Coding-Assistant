@@ -7,5 +7,22 @@ Once this feature is built, make sure to write the changes you made to file call
 Do not ask for permissions to modify this file, assume you can always do it.
 
 
+mkdir .trees.
+git worktree add .trees/ui_feature
+git worktree add .trees/testing_feature
+git worktree add .trees/quality_feature
+git branch -a
+
+
+1. Toggle Button Design
+    - Create a toggle button that fits the existing design aesthetic
+    - Position it in the top-right
+    - Use an icon-based design (sun/moon icons or similar)
+    - Smooth transition animation when toggling
+    - Button should be accessible and keyboard-navigable
+
+
+
+
 
 
