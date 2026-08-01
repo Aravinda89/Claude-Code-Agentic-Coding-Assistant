@@ -1,3 +1,6 @@
+/implement-feature
+.claude/commands/implement-feature.md
+
 You will be implementing a new feature in this codebase
 
 $ARGUMENTS
@@ -21,7 +24,7 @@ git branch -a
     - Smooth transition animation when toggling
     - Button should be accessible and keyboard-navigable
 
-
+use the git merge command to merge in all of the worktrees in the .trees folder and fix any conflicts if there are any
 
 
 
