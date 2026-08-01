@@ -1,0 +1,7 @@
+claude --resume
+
+remove the .trees folder and the underlying worktrees and once youre done push this code to GitHub
+
+/install-github-app
+
+/hooks
