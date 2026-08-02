@@ -98,8 +98,14 @@ Convert `@EDA_Refactored.ipynb` into a professional Streamlit dashboard with thi
 - Include requirements.txt and README.md
 
 
+streamlit run dashboard.py
 
 
+
+ this is a good start but I want implement the following changes
+- make sure the default year is 2023
+- add filters for months as well
+- remove the empty card for each graph
 
 
 
