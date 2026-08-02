@@ -4,6 +4,9 @@ Exploratory analysis of e-commerce order, product, customer, and review data:
 revenue trends, product category and geographic breakdowns, and delivery
 speed versus customer review scores.
 
+<img width="1365" height="634" alt="Screenshot 2026-08-02 at 08-16-32 E-Commerce Sales Dashboard" src="https://github.com/user-attachments/assets/35714a7f-29ff-4910-a3cb-e4bf0a4cd3d2" />
+
+
 ## Project structure
 
 ```
