@@ -1,0 +1,3 @@
+# Transient output from the Playwright MCP server (console logs, page snapshots,
+# verification screenshots).
+.playwright-mcp/
