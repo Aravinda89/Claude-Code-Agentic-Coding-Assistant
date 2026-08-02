@@ -1,0 +1,16 @@
+# Core dependencies for data_loader.py, business_metrics.py, dashboard_components.py,
+# EDA_Refactored.ipynb, and app.py
+pandas==2.0.1
+numpy==1.24.3
+matplotlib==3.7.5
+plotly==6.9.0
+
+# Required to run the notebook as a Jupyter kernel
+ipykernel==6.29.5
+
+# Streamlit dashboard (app.py)
+streamlit==1.39.1
+
+# Needed only if you don't already have a Jupyter interface installed
+# (JupyterLab, classic Notebook, or the VS Code / PyCharm Jupyter extension).
+# jupyterlab
